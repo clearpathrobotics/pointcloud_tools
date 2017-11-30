@@ -164,3 +164,12 @@ target_link_libraries(sonar_pointcloud_node
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+if (CATKIN_ENABLE_TESTING)
+  find_package(roslint REQUIRED)
+  roslint_cpp(src/sonar_pointcloud_node.cpp)
+  roslint_add_test()
+
+  find_package(roslaunch REQUIRED)
+  roslaunch_add_file_check(launch/sonar_pointcloud.launch)
+endif()
+

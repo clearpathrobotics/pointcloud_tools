@@ -199,3 +199,12 @@ target_link_libraries(${PROJECT_NAME}_node
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+if (CATKIN_ENABLE_TESTING)
+  find_package(roslint REQUIRED)
+  roslint_cpp(src/pointcloud_fuse_node.cpp)
+  roslint_add_test()
+
+  find_package(roslaunch REQUIRED)
+  roslaunch_add_file_check(launch/pointcloud_fuse.launch)
+endif()
