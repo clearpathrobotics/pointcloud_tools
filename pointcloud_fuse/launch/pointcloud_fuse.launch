@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="pointcloud_fuse" type="pointcloud_fuse_node" name="pointcloud_fuse">
+    <param name="update_frequency" value="5"/>
+    <param name="cloud0_topic" value="/cloud1"/>
+    <param name="cloud1_topic" value="/cloud2"/>
+  </node>
+</launch>

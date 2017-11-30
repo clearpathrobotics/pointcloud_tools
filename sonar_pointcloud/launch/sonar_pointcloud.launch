@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="sonar_pointcloud" type="sonar_pointcloud_node" name="sonar_pointcloud">
+    <param name="update_frequency" value="10"/>
+    <param name="sonar0_topic" value="/sonar1"/>
+    <param name="sonar1_topic" value="/sonar2"/>
+    <param name="sonar2_topic" value="/sonar3"/>
+    <param name="sonar3_topic" value="/sonar4"/>
+    <param name="sonar4_topic" value="/sonar5"/>
+    <param name="sonar5_topic" value="/sonar6"/>
+    <param name="sonar6_topic" value="/sonar7"/>
+    <param name="sonar7_topic" value="/sonar8"/>
+  </node>
+  <node pkg="tf" type="static_transform_publisher" name="sonar_cloud_broadcaster" args="0 0 0 0 0 0 1 base_link sonar_cloud 100" />
+
+</launch>
