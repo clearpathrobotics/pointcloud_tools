@@ -32,6 +32,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <sensor_msgs/PointCloud.h>
 #include <tf/transform_listener.h>
 #include <tf/transform_datatypes.h>
+#include <tf_conversions/tf_eigen.h>
 #include <tf2_sensor_msgs/tf2_sensor_msgs.h>
 
 namespace pointcloud_fuse
@@ -125,17 +126,16 @@ void PointCloudFuse::updatePointCloud(const ros::TimerEvent& te)
     try
     {
       tf::StampedTransform transform;
-      geometry_msgs::TransformStamped transform_msgs;
+      Eigen::Affine3d transform_eigen;
       tf_listener_.lookupTransform(cloud_frame_id_, cloud_msg->header.frame_id, ros::Time(0), transform);
-      tf::transformStampedTFToMsg(transform, transform_msgs);
+      tf::transformTFToEigen(transform, transform_eigen);
 
-      sensor_msgs::PointCloud2 transformed_cloud;
-      tf2::doTransform(*cloud_msg, transformed_cloud, transform_msgs);
+      pcl::PointCloud<pcl::PointXYZ> original_cloud, shifted_cloud;
+      pcl::fromROSMsg(*cloud_msg, original_cloud);
 
-      pcl::PointCloud<pcl::PointXYZ> temp_pcl;
-      pcl::fromROSMsg(transformed_cloud, temp_pcl);
+      pcl::transformPointCloud(original_cloud, shifted_cloud, transform_eigen);
 
-      point_cloud_pcl = temp_pcl + point_cloud_pcl;
+      point_cloud_pcl = shifted_cloud + point_cloud_pcl;
     }
     catch (tf::TransformException ex)
     {

@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
   tf
   tf2_sensor_msgs
+  tf_conversions
 )
 
 ## System dependencies are found with CMake's conventions
