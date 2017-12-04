@@ -62,12 +62,9 @@ public:
 };
 SonarPointCloud::SonarPointCloud(ros::NodeHandle& nh): nh_(nh)
 {
-  // control how densely we create points in the point cloud
-  angle_step_ = 0.10f;
-  // Coordinate frame into which we transform all sonar data and publish the point cloud
-  cloud_frame_id_ = "sonar_cloud";
-  // Fixed rate at which we publish a new point cloud
-  nh_.getParam("update_frequency", update_frequency_);
+  nh_.param<double>("update_frequency", update_frequency_, 5);
+  nh_.param<float>("angle_step", angle_step_, 0.10);
+  nh_.param<std::string>("cloud_frame_id_", cloud_frame_id_, "sonar_cloud");
 
   point_cloud_pub_ = nh_.advertise<PointCloud>("points", 1, true);
   update_point_cloud_timer_ = nh_.createTimer(
