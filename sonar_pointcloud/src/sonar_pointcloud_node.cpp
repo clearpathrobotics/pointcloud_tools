@@ -103,9 +103,13 @@ void SonarPointCloud::subscribeSonars()
 void SonarPointCloud::insertRangeIntoPointCloud(
   PointCloud::Ptr point_cloud, float range, float field_of_view, std::string sensor_frame_id)
 {
-  for (float th = 0.0; th < field_of_view; th += angle_step_)
+  int rings = floor(field_of_view / 2 / angle_step_);
+  float adjusted_angle_step = field_of_view / 2 / rings;
+
+  for (int ring = 0; ring <= rings; ring += 1)
   {
-    for (float ph = 0.0; ph < M_PI*2; ph += angle_step_)
+    float th = ring * adjusted_angle_step;
+    for (float ph = 0.0; ph < M_PI*2; ph += angle_step_ * 2)
     {
       geometry_msgs::PointStamped ps_sonarframe;
       ps_sonarframe.header.stamp = ros::Time::now();
@@ -156,8 +160,11 @@ void SonarPointCloud::updatePointCloud(const ros::TimerEvent& te)
   {
     std:: string topic = iter->first;
     sensor_msgs::Range range_msg = iter->second;
-    ROS_DEBUG("Updating point cloud from topic %s with range %f", topic.c_str(), range_msg.range);
-    insertRangeIntoPointCloud(point_cloud, range_msg.range, range_msg.field_of_view, range_msg.header.frame_id);
+    if(range_msg.field_of_view > 0.001)
+    {
+      ROS_DEBUG("Updating point cloud from topic %s with range %f", topic.c_str(), range_msg.range);
+      insertRangeIntoPointCloud(point_cloud, range_msg.range, range_msg.field_of_view, range_msg.header.frame_id);
+    }
   }
   point_cloud_pub_.publish(point_cloud);
 }

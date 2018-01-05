@@ -59,10 +59,8 @@ public:
 };
 PointCloudFuse::PointCloudFuse(ros::NodeHandle& nh): nh_(nh)
 {
-  // control how densely we create points in the point cloud
-  angle_step_ = 0.10f;
   // Coordinate frame into which we transform all cloud data and publish the point cloud
-  cloud_frame_id_ = "cloud_fuse_frame";
+  nh_.getParam("fused_cloud_frame", cloud_frame_id_);
   // Fixed rate at which we publish a new point cloud
   nh_.getParam("update_frequency", update_frequency_);
 
@@ -110,8 +108,6 @@ void PointCloudFuse::updatePointCloud(const ros::TimerEvent& te)
 {
   sensor_msgs::PointCloud2 point_cloud_pub_msg;
   pcl::PointCloud<pcl::PointXYZ> point_cloud_pcl;
-  point_cloud_pub_msg.header.frame_id = cloud_frame_id_;
-  point_cloud_pub_msg.header.stamp = ros::Time::now();
 
   for (
     std::map< std::string, boost::shared_ptr<sensor_msgs::PointCloud2> >::iterator iter = clouds_.begin();
@@ -144,6 +140,10 @@ void PointCloudFuse::updatePointCloud(const ros::TimerEvent& te)
   }
 
   pcl::toROSMsg(point_cloud_pcl, point_cloud_pub_msg);
+
+  point_cloud_pub_msg.header.frame_id = cloud_frame_id_;
+  point_cloud_pub_msg.header.stamp = ros::Time::now();
+
   point_cloud_pub_.publish(point_cloud_pub_msg);
 }
 std::string PointCloudFuse::itos(int i)  // convert int to string
