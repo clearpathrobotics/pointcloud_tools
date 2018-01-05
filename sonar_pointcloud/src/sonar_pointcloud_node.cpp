@@ -160,7 +160,7 @@ void SonarPointCloud::updatePointCloud(const ros::TimerEvent& te)
   {
     std:: string topic = iter->first;
     sensor_msgs::Range range_msg = iter->second;
-    if(range_msg.field_of_view > 0.001)
+    if (range_msg.field_of_view > 0.001)
     {
       ROS_DEBUG("Updating point cloud from topic %s with range %f", topic.c_str(), range_msg.range);
       insertRangeIntoPointCloud(point_cloud, range_msg.range, range_msg.field_of_view, range_msg.header.frame_id);
